@@ -1,6 +1,6 @@
 # QR Code Generator Web App
 
-![QR Code Generator Banner](https://example.com/qr-banner.png)
+![QR Code Generator Banner](https://github.com/NesBet/QR-Code-generator/blob/main/components/banner.png)
 
 A lightweight, fast, and responsive web application for generating QR codes from URLs. This tool allows users to create custom QR codes that can be easily downloaded and used in digital or print materials.
 
@@ -35,7 +35,7 @@ A lightweight, fast, and responsive web application for generating QR codes from
 
 Try out the QR Code Generator: [https://yourdomain.com/qr-generator](https://yourdomain.com/qr-generator)
 
-![QR Code Generator Screenshot](https://example.com/screenshot.png)
+![QR Code Generator Screenshot](https://github.com/NesBet/QR-Code-generator/blob/main/components/screenshot.png)
 
 ## 💻 Installation
 
