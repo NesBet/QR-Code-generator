@@ -38,8 +38,21 @@ document.addEventListener("DOMContentLoaded", () => {
       new URL(string); // Throws error for invalid URLs
       return true;
     } catch (_) {
+      // Allow common non-http protocols if they pass regex and URL constructor fails
+      // (e.g., mailto:, tel: might fail in some stricter environments but are valid uses)
       if (/^(?:mailto:|tel:|data:)/i.test(string)) {
-        return true; // Allow common non-http protocols if they pass regex
+        return true;
+      }
+      // Allow simple strings without protocol if they look like domain names
+      // (common user input pattern, assume https)
+      if (
+        !/^(?:(?:https?|ftp):)?\/\//i.test(string) &&
+        /^[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,}(:[0-9]{1,5})?(\/.*)?$/i.test(
+          string,
+        )
+      ) {
+        // You might want to prepend 'https://' later if using this lax check
+        return true;
       }
       return false;
     }
@@ -51,16 +64,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const clearQrOutput = () => {
     qrCodeOutput.innerHTML = "";
     qrMessage.textContent = "";
-
-    // Both hide and disable the download button
     downloadBtn.hidden = true;
     downloadBtn.disabled = true;
     downloadBtn.setAttribute("aria-disabled", "true");
-
     qrCodeDataUrl = null;
     currentQRInstance = null;
-
-    // If the spinner was visible for some reason, hide it
     if (!loadingSpinner.hidden) {
       hideLoading();
     }
@@ -70,12 +78,9 @@ document.addEventListener("DOMContentLoaded", () => {
    * Shows the loading spinner and resets the QR display area.
    */
   const showLoading = () => {
-    // First, make sure the output area is cleared
     clearQrOutput();
-
-    // Then show the spinner
     loadingSpinner.hidden = false;
-    qrContainer.setAttribute("aria-busy", "true"); // Indicate loading state for accessibility
+    qrContainer.setAttribute("aria-busy", "true");
   };
 
   /**
@@ -83,7 +88,7 @@ document.addEventListener("DOMContentLoaded", () => {
    */
   const hideLoading = () => {
     loadingSpinner.hidden = true;
-    qrContainer.setAttribute("aria-busy", "false"); // Indicate loading finished
+    qrContainer.setAttribute("aria-busy", "false");
   };
 
   /**
@@ -91,55 +96,52 @@ document.addEventListener("DOMContentLoaded", () => {
    * @param {string} url - The URL to encode.
    */
   const generateQrCode = (url) => {
-    // --- Step 1: Show Loading State ---
     showLoading();
 
-    // Use setTimeout with increased delay to make the spinner more visible
+    // Use setTimeout with delay
     setTimeout(() => {
       try {
-        // --- Step 2: Generate QR Code ---
         const canvas = document.createElement("canvas");
+        // --- QRious Configuration Change ---
+        // Removed the 'padding' option. The QR pattern will now use more of the canvas space.
+        // The visual white margin is handled by CSS padding on the canvas element itself.
         currentQRInstance = new QRious({
           element: canvas,
           value: url,
-          size: 250,
-          padding: 10,
-          level: "H",
-          background: "#ffffff",
-          foreground: "#000000",
+          size: 250, // Size of the canvas element itself
+          // padding: 10, // REMOVED - Internal quiet zone padding from QRious
+          level: "H", // Error correction level (High)
+          background: "#ffffff", // Background of the entire canvas
+          foreground: "#000000", // Color of the QR code modules
         });
+        // --- End of QRious Configuration Change ---
 
-        // --- Step 3: Handle Success ---
-        qrCodeDataUrl = canvas.toDataURL("image/png"); // Store data URL *before* hiding loading
+        qrCodeDataUrl = canvas.toDataURL("image/png");
 
-        hideLoading(); // Hide spinner
-        qrCodeOutput.appendChild(canvas); // Display QR code
+        hideLoading();
+        qrCodeOutput.appendChild(canvas);
 
-        // Enable and show the download button
         downloadBtn.hidden = false;
         downloadBtn.disabled = false;
         downloadBtn.setAttribute("aria-disabled", "false");
 
         qrMessage.textContent = "QR Code generated successfully!";
         qrMessage.style.color = "var(--success-color)";
+        urlInput.removeAttribute("aria-invalid"); // Clear potential previous error state
       } catch (error) {
-        // --- Step 4: Handle Error ---
         console.error("QR Code Generation Error:", error);
-        hideLoading(); // Hide spinner even on error
+        hideLoading();
         qrMessage.textContent =
           "Error generating QR Code. Please check the URL or try again.";
         qrMessage.style.color = "var(--error-color)";
-
-        // Ensure download button remains hidden and disabled
         downloadBtn.hidden = true;
         downloadBtn.disabled = true;
         downloadBtn.setAttribute("aria-disabled", "true");
-
-        qrCodeOutput.innerHTML = ""; // Clear any potential partial output
-        urlInput.setAttribute("aria-invalid", "true"); // Mark input as potentially causing issue
-        qrCodeDataUrl = null; // Clear any potentially bad data
+        qrCodeOutput.innerHTML = "";
+        urlInput.setAttribute("aria-invalid", "true");
+        qrCodeDataUrl = null;
       }
-    }, 800); // Increased delay for more noticeable loading spinner
+    }, 500); // Adjusted delay slightly
   };
 
   /**
@@ -151,8 +153,6 @@ document.addEventListener("DOMContentLoaded", () => {
       qrMessage.textContent =
         "Could not download QR Code. Please generate one first.";
       qrMessage.style.color = "var(--error-color)";
-
-      // Hide and disable button if data is missing
       downloadBtn.hidden = true;
       downloadBtn.disabled = true;
       downloadBtn.setAttribute("aria-disabled", "true");
@@ -191,19 +191,19 @@ document.addEventListener("DOMContentLoaded", () => {
       document.documentElement.getAttribute("data-theme") || "light";
     const newTheme = currentTheme === "light" ? "dark" : "light";
     document.documentElement.setAttribute("data-theme", newTheme);
-    localStorage.setItem("theme", newTheme); // Save preference
+    localStorage.setItem("theme", newTheme);
     updateThemeIcon(newTheme);
   };
 
   // --- Event Listeners ---
 
-  // Validate URL input on typing/pasting and clear QR output when input changes
   urlInput.addEventListener("input", () => {
     const urlValue = urlInput.value.trim();
-    const isValid = isValidUrl(urlValue);
 
-    // Clear previous QR code output whenever input changes
-    clearQrOutput();
+    // Clear previous QR code output when input changes significantly
+    if (qrCodeOutput.innerHTML || qrMessage.textContent) {
+      clearQrOutput();
+    }
 
     if (urlValue === "") {
       urlInput.classList.remove("valid", "invalid");
@@ -211,33 +211,35 @@ document.addEventListener("DOMContentLoaded", () => {
       urlError.style.display = "none";
       generateBtn.disabled = true;
       urlInput.setAttribute("aria-invalid", "false");
-    } else if (isValid) {
-      urlInput.classList.add("valid");
-      urlInput.classList.remove("invalid");
-      urlError.textContent = "";
-      urlError.style.display = "none";
-      generateBtn.disabled = false;
-      urlInput.setAttribute("aria-invalid", "false");
     } else {
-      urlInput.classList.add("invalid");
-      urlInput.classList.remove("valid");
-      urlError.textContent =
-        "Please enter a valid URL (e.g., https://example.com)";
-      urlError.style.display = "block";
-      generateBtn.disabled = true;
-      urlInput.setAttribute("aria-invalid", "true");
+      // Basic validation feedback while typing
+      const isValid = isValidUrl(urlValue); // Use the validation function
+      if (isValid) {
+        urlInput.classList.add("valid");
+        urlInput.classList.remove("invalid");
+        urlError.textContent = "";
+        urlError.style.display = "none";
+        generateBtn.disabled = false;
+        urlInput.setAttribute("aria-invalid", "false");
+      } else {
+        urlInput.classList.add("invalid");
+        urlInput.classList.remove("valid");
+        urlError.textContent =
+          "Please enter a valid URL (e.g., https://example.com, mailto:a@b.com)";
+        urlError.style.display = "block";
+        generateBtn.disabled = true;
+        urlInput.setAttribute("aria-invalid", "true");
+      }
     }
   });
 
-  // Handle form submission
   qrForm.addEventListener("submit", (event) => {
     event.preventDefault();
     const urlValue = urlInput.value.trim();
-    // Re-validate just before generating
+    // Final validation check on submit
     if (isValidUrl(urlValue)) {
       generateQrCode(urlValue);
     } else {
-      // Should be prevented by button state, but handle defensively
       urlInput.classList.add("invalid");
       urlError.textContent = "Please enter a valid URL before generating.";
       urlError.style.display = "block";
@@ -246,29 +248,22 @@ document.addEventListener("DOMContentLoaded", () => {
       urlInput.setAttribute("aria-invalid", "true");
       qrMessage.textContent = "Cannot generate QR Code with invalid URL.";
       qrMessage.style.color = "var(--error-color)";
-      clearQrOutput();
+      clearQrOutput(); // Ensure output is clear if submit fails validation
     }
   });
 
-  // Handle download button click
   downloadBtn.addEventListener("click", handleDownload);
-
-  // Handle theme toggle button click
   themeToggleButton.addEventListener("click", toggleTheme);
 
   // --- Initialization ---
-
   const savedTheme = localStorage.getItem("theme") || "light";
   document.documentElement.setAttribute("data-theme", savedTheme);
   updateThemeIcon(savedTheme);
 
-  generateBtn.disabled = true; // Initially disabled
-
-  // Both hide and disable the download button initially
+  generateBtn.disabled = true;
   downloadBtn.hidden = true;
   downloadBtn.disabled = true;
   downloadBtn.setAttribute("aria-disabled", "true");
-
-  loadingSpinner.hidden = true; // Initially hidden
-  urlError.style.display = "none"; // Initially hidden
-}); // End DOMContentLoaded
+  loadingSpinner.hidden = true;
+  urlError.style.display = "none";
+});
