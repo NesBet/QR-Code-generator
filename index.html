@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <!-- Existing meta tags -->
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <!-- Enhanced meta description -->
+        <meta
+            name="description"
+            content="Free online QR code generator for URLs, text and contact information. Create, customize and download QR codes instantly with no registration required."
+        />
+
+        <!-- Additional meta tags -->
+        <meta
+            name="keywords"
+            content="QR code generator, create QR code, free QR code, URL to QR code, download QR code, online QR maker"
+        />
+        <meta name="author" content="NESHACKS" />
+
+        <!-- Canonical URL to prevent duplicate content issues -->
+        <link rel="canonical" href="https://yourdomain.com/qr-generator" />
+
+        <!-- Social media meta tags (Open Graph for Facebook) -->
+        <meta
+            property="og:title"
+            content="Free Online QR Code Generator | Create & Download QR Codes"
+        />
+        <meta
+            property="og:description"
+            content="Generate custom QR codes instantly from any URL. Easy to use, responsive, and includes download options. No registration required."
+        />
+        <meta
+            property="og:image"
+            content="https://yourdomain.com/qr-generator-preview.jpg"
+        />
+        <meta property="og:url" content="https://yourdomain.com/qr-generator" />
+        <meta property="og:type" content="website" />
+
+        <!-- Twitter Card data -->
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta
+            name="twitter:title"
+            content="Free Online QR Code Generator | Create & Download QR Codes"
+        />
+        <meta
+            name="twitter:description"
+            content="Generate custom QR codes instantly from any URL. Easy to use, responsive, with free downloads."
+        />
+        <meta
+            name="twitter:image"
+            content="https://yourdomain.com/qr-generator-preview.jpg"
+        />
+
+        <!-- Improved title with keywords -->
+        <title>
+            Free Online QR Code Generator | Create & Download QR Codes
+        </title>
+        <link rel="stylesheet" href="style.css" />
+        <!-- Favicon - Optional but recommended -->
+        <link rel="icon" href="logo.ico" type="image/x-icon" />
+        <!-- QRious Library (CDN) -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+    </head>
+    <body>
+        <header class="site-header">
+            <h1>QR Code Generator</h1>
+            <button
+                id="theme-toggle"
+                class="theme-toggle-button"
+                aria-label="Toggle dark mode"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    width="24"
+                    height="24"
+                    class="icon icon-moon"
+                >
+                    <path
+                        fill-rule="evenodd"
+                        d="M9.528 1.718a.75.75 0 01.162.819A8.97 8.97 0 009 6a9 9 0 009 9 8.97 8.97 0 003.463-.69.75.75 0 01.981.98 10.503 10.503 0 01-9.694 6.46c-5.799 0-10.5-4.701-10.5-10.5 0-3.51 1.713-6.622 4.43-8.565a.75.75 0 01.819.162z"
+                        clip-rule="evenodd"
+                    />
+                </svg>
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    width="24"
+                    height="24"
+                    class="icon icon-sun"
+                    style="display: none"
+                >
+                    <path
+                        d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.591 1.59a.75.75 0 001.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.166 7.758a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z"
+                    />
+                </svg>
+            </button>
+        </header>
+
+        <main>
+            <section class="description" aria-labelledby="description-heading">
+                <h2 id="description-heading" class="visually-hidden">
+                    Description
+                </h2>
+                <p>
+                    Enter a valid web address (URL) below to generate a QR code
+                    instantly. You can then download the QR code as a PNG image.
+                </p>
+            </section>
+
+            <section class="generator" aria-labelledby="generator-heading">
+                <h2 id="generator-heading" class="visually-hidden">
+                    QR Code Generator Form
+                </h2>
+                <form id="qrForm" novalidate>
+                    <div class="input-group">
+                        <label for="urlInput">Enter URL:</label>
+                        <input
+                            type="url"
+                            id="urlInput"
+                            name="url"
+                            placeholder="https://example.com"
+                            required
+                            aria-required="true"
+                            aria-describedby="urlError"
+                            aria-invalid="false"
+                        />
+                        <p
+                            id="urlError"
+                            class="error-message"
+                            role="alert"
+                            aria-live="polite"
+                        ></p>
+                    </div>
+                    <button
+                        type="submit"
+                        id="generateBtn"
+                        disabled
+                        aria-label="Generate QR Code"
+                    >
+                        Generate QR Code
+                    </button>
+                </form>
+
+                <div id="qrContainer" class="qr-container" aria-live="polite">
+                    <div
+                        id="loadingSpinner"
+                        class="spinner"
+                        role="status"
+                        aria-label="Loading QR code"
+                        hidden
+                    >
+                        <div class="bounce1"></div>
+                        <div class="bounce2"></div>
+                        <div class="bounce3"></div>
+                    </div>
+                    <!-- Canvas will be added here by JS if needed, or img tag directly -->
+                    <div id="qrCodeOutput"></div>
+                    <!-- Container for QR Code image/canvas -->
+                    <p id="qrMessage" class="feedback-message"></p>
+                    <button
+                        id="downloadBtn"
+                        class="download-button"
+                        hidden
+                        aria-label="Download QR Code"
+                    >
+                        Download PNG
+                    </button>
+                </div>
+            </section>
+        </main>
+
+        <footer class="site-footer">
+            <p>
+                Powered by
+                <a
+                    href="https://github.com/neocotic/qrious"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >QRious</a
+                >
+                QR Code Library.
+            </p>
+            <!-- Add other links if needed -->
+        </footer>
+
+        <script src="script.js"></script>
+    </body>
+</html>

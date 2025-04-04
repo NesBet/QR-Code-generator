@@ -1,0 +1,439 @@
+/* ------------------- */
+/* Basic Reset & Setup */
+/* ------------------- */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    /* Light Theme (Default) */
+    --bg-color: #f4f7f9;
+    --text-color: #222;
+    --primary-color: #007bff;
+    --primary-hover-color: #0056b3;
+    --secondary-color: #ffffff;
+    --border-color: #ccc;
+    --input-bg: #ffffff;
+    --input-border: #ccc;
+    --input-focus-border: #007bff;
+    --error-color: #dc3545;
+    --success-color: #28a745;
+    --disabled-bg: #e9ecef;
+    --disabled-text: #6c757d;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --spinner-color: #007bff;
+    --header-bg: #ffffff;
+    --footer-text: #555;
+}
+
+[data-theme="dark"] {
+    --bg-color: #1a1a2e;
+    --text-color: #e0e0e0;
+    --primary-color: #00a8cc; /* Adjusted primary for dark */
+    --primary-hover-color: #007c9a;
+    --secondary-color: #2a2a4a;
+    --border-color: #444;
+    --input-bg: #2a2a4a;
+    --input-border: #555;
+    --input-focus-border: #00a8cc;
+    --error-color: #ff6b6b;
+    --success-color: #4caf50; /* Brighter green for dark */
+    --disabled-bg: #3a3a5a;
+    --disabled-text: #888;
+    --shadow-color: rgba(0, 0, 0, 0.3);
+    --spinner-color: #00a8cc;
+    --header-bg: #1f1f3a;
+    --footer-text: #aaa;
+}
+
+html {
+    font-size: 16px; /* Base font size */
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family:
+        -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,
+        sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    transition:
+        background-color 0.3s ease,
+        color 0.3s ease;
+}
+
+/* ------------------- */
+/* Utility Classes     */
+/* ------------------- */
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+/* ------------------- */
+/* Layout & Header     */
+/* ------------------- */
+.site-header {
+    background-color: var(--header-bg);
+    padding: 1rem 2rem;
+    box-shadow: 0 2px 4px var(--shadow-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.3s ease;
+}
+
+.site-header h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin: 0;
+}
+
+main {
+    flex-grow: 1; /* Ensure main takes up available space */
+    max-width: 700px;
+    width: 90%;
+    margin: 2rem auto; /* Center main content */
+    padding: 1.5rem;
+    background-color: var(--secondary-color);
+    border-radius: 8px;
+    box-shadow: 0 4px 8px var(--shadow-color);
+    transition: background-color 0.3s ease;
+}
+
+/* ------------------- */
+/* Sections & Content  */
+/* ------------------- */
+.description {
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 1rem;
+    color: var(--text-color);
+}
+
+.generator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* ------------------- */
+/* Form & Input        */
+/* ------------------- */
+#qrForm {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem; /* Space between elements */
+    margin-bottom: 2rem;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+#qrForm label {
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+#urlInput {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    border: 2px solid var(--input-border);
+    border-radius: 6px;
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    transition:
+        border-color 0.3s ease,
+        box-shadow 0.3s ease,
+        background-color 0.3s ease,
+        color 0.3s ease;
+}
+
+#urlInput:focus {
+    outline: none;
+    border-color: var(--input-focus-border);
+    box-shadow: 0 0 0 3px rgba(var(--primary-color), 0.2); /* Use primary color with alpha */
+}
+
+/* Input Validation Styles */
+#urlInput.valid {
+    border-color: var(--success-color);
+}
+
+#urlInput.invalid {
+    border-color: var(--error-color);
+}
+
+#urlInput.valid:focus {
+    box-shadow: 0 0 0 3px rgba(var(--success-color), 0.2);
+}
+#urlInput.invalid:focus {
+    box-shadow: 0 0 0 3px rgba(var(--error-color), 0.2);
+}
+
+.error-message {
+    color: var(--error-color);
+    font-size: 0.875rem;
+    margin-top: 0.3rem;
+    min-height: 1.2em; /* Reserve space to prevent layout shifts */
+    display: none; /* Hidden by default */
+}
+
+#urlInput.invalid + .error-message {
+    display: block; /* Show when input is invalid */
+}
+
+/* ------------------- */
+/* Buttons             */
+/* ------------------- */
+button {
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 500;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    border: none;
+    transition:
+        background-color 0.3s ease,
+        opacity 0.3s ease,
+        transform 0.1s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+#generateBtn {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+#generateBtn:hover:not(:disabled) {
+    background-color: var(--primary-hover-color);
+}
+
+#generateBtn:disabled {
+    background-color: var(--disabled-bg);
+    color: var(--disabled-text);
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.download-button {
+    background-color: var(--success-color);
+    color: white;
+    margin-top: 1rem;
+}
+
+.download-button:hover {
+    background-color: #218838; /* Darker green */
+    opacity: 0.9;
+}
+
+.download-button:disabled,
+.download-button[aria-disabled="true"] {
+    background-color: var(--disabled-bg);
+    color: var(--disabled-text);
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* Ensure proper handling of the hidden state */
+.download-button[hidden] {
+    display: none;
+}
+
+/* Hover effect should only apply when not disabled */
+.download-button:hover:not(:disabled):not([aria-disabled="true"]) {
+    background-color: #218838; /* Darker green */
+    opacity: 0.9;
+}
+
+/* Dark mode specific hover when not disabled */
+[data-theme="dark"]
+    .download-button:hover:not(:disabled):not([aria-disabled="true"]) {
+    background-color: #5cdb60; /* Lighter green */
+}
+
+/* Dark mode specific hover */
+[data-theme="dark"] .download-button:hover {
+    background-color: #5cdb60; /* Lighter green */
+}
+
+/* Theme Toggle Button */
+.theme-toggle-button {
+    background: none;
+    border: none;
+    color: var(--text-color);
+    padding: 0.5rem;
+    border-radius: 50%; /* Make it round */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.theme-toggle-button:hover {
+    background-color: rgba(var(--text-color), 0.1);
+}
+.theme-toggle-button svg {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+}
+
+/* ------------------- */
+/* QR Code & Feedback  */
+/* ------------------- */
+.qr-container {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 250px; /* Reserve space */
+    width: 100%;
+    padding-top: 1rem;
+}
+
+#qrCodeOutput {
+    /* Style the container if needed, e.g., background */
+    margin-bottom: 1rem; /* Space between QR and messages/button */
+    line-height: 0; /* Prevent extra space below canvas/img */
+}
+
+#qrCodeOutput canvas,
+#qrCodeOutput img {
+    display: block; /* Remove extra space below */
+    max-width: 100%;
+    height: auto;
+    border: 1px solid var(--border-color); /* Optional border */
+    border-radius: 4px;
+    background-color: white; /* Ensure QR code background is white */
+    padding: 10px; /* Padding around QR code inside border */
+    box-shadow: 0 2px 4px var(--shadow-color);
+}
+
+.feedback-message {
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    min-height: 1.2em;
+    text-align: center;
+}
+
+/* Loading Spinner */
+.spinner {
+    margin: 30px auto;
+    width: 70px;
+    text-align: center;
+}
+
+.spinner > div {
+    width: 18px;
+    height: 18px;
+    background-color: var(--spinner-color);
+    border-radius: 100%;
+    display: inline-block;
+    animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+}
+
+.spinner .bounce1 {
+    animation-delay: -0.32s;
+}
+
+.spinner .bounce2 {
+    animation-delay: -0.16s;
+}
+
+@keyframes sk-bouncedelay {
+    0%,
+    80%,
+    100% {
+        transform: scale(0);
+    }
+    40% {
+        transform: scale(1);
+    }
+}
+
+/* ------------------- */
+/* Footer              */
+/* ------------------- */
+.site-footer {
+    text-align: center;
+    padding: 1.5rem 1rem;
+    margin-top: 2rem;
+    font-size: 0.875rem;
+    color: var(--footer-text);
+    background-color: transparent; /* Inherit from body or set specific */
+}
+
+.site-footer a {
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.site-footer a:hover {
+    color: var(--primary-hover-color);
+    text-decoration: underline;
+}
+
+/* ------------------- */
+/* Responsiveness      */
+/* ------------------- */
+@media (max-width: 768px) {
+    html {
+        font-size: 15px; /* Slightly smaller base font on smaller screens */
+    }
+    main {
+        width: 95%;
+        margin: 1rem auto;
+        padding: 1rem;
+    }
+    .site-header {
+        padding: 0.8rem 1rem;
+    }
+    .site-header h1 {
+        font-size: 1.3rem;
+    }
+}
+
+@media (max-width: 480px) {
+    html {
+        font-size: 14px;
+    }
+    #qrForm {
+        gap: 0.8rem;
+    }
+    button {
+        padding: 0.65rem 1.2rem;
+        font-size: 0.95rem;
+    }
+    .site-header h1 {
+        font-size: 1.2rem;
+    }
+}
