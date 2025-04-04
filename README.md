@@ -211,6 +211,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Contact
 
 If you have any questions or suggestions, please open an issue on GitHub or contact [nehemiah.kibet77@gmail.com](mailto:nehemiah.kibet77@gmail.com).
+You can also reach out to me by visiting my [portfolio](https://neshkibet.vercel.app).
 
 Built with ❤️ by [Neshacks]
 
