@@ -33,7 +33,7 @@ A lightweight, fast, and responsive web application for generating QR codes from
 
 ## 🌐 Demo
 
-Try out the QR Code Generator: [https://yourdomain.com/qr-generator](https://yourdomain.com/qr-generator)
+Try out the QR Code Generator: [https://qrcodeguru.vercel.app/](https://qrcodeguru.vercel.app/)
 
 ![QR Code Generator Screenshot](https://github.com/NesBet/QR-Code-generator/blob/main/components/screenshot.png)
 
